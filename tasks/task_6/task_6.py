@@ -45,7 +45,7 @@ if __name__ == "__main__":
     # Configuration for EmbeddingClient
     embed_config = {
         "model_name": "textembedding-gecko@003",
-        "project": "YOUR PROJECT ID HERE",
+        "project": "mission-quizzify-421318",
         "location": "us-central1"
     }
     
@@ -54,8 +54,12 @@ if __name__ == "__main__":
         st.header("Quizzify")
         ####### YOUR CODE HERE #######
         # 1) Initalize DocumentProcessor and Ingest Documents from Task 3
+        document_processor = DocumentProcessor()
+        document_processor.ingest_documents()
         # 2) Initalize the EmbeddingClient from Task 4 with embed config
+        embedding_client = EmbeddingClient(**embed_config)
         # 3) Initialize the ChromaCollectionCreator from Task 5
+        chroma_creator = ChromaCollectionCreator(document_processor, embedding_client)
         ####### YOUR CODE HERE #######
 
         with st.form("Load Data to Chroma"):
@@ -64,7 +68,9 @@ if __name__ == "__main__":
             
             ####### YOUR CODE HERE #######
             # 4) Use streamlit widgets to capture the user's input
+            quiz_topic = st.text_input("Enter the topic for the quiz!")
             # 4) for the quiz topic and the desired number of questions
+            st.slider("Select the number of questions", min_value=1, max_value=20, value=5) 
             ####### YOUR CODE HERE #######
             
             document = None
@@ -74,9 +80,9 @@ if __name__ == "__main__":
                 ####### YOUR CODE HERE #######
                 # 5) Use the create_chroma_collection() method to create a Chroma collection from the processed documents
                 ####### YOUR CODE HERE #######
-                    
+                chroma_creator.create_chroma_collection()    
                 # Uncomment the following lines to test the query_chroma_collection() method
-                # document = chroma_creator.query_chroma_collection(topic_input) 
+                document = chroma_creator.query_chroma_collection(quiz_topic) 
                 
     if document:
         screen.empty() # Screen 2
